@@ -6,6 +6,7 @@ import { RouterLink, RouterView } from 'vue-router'
   <header>
 
     <div class="wrapper">
+      <img src="./assets/17c4ce6f-e2e9-4397-bb51-4c37ea60f152_removalai_preview.png" alt="" class="logo">
 
       <nav>
         <RouterLink to="/">Home</RouterLink>
@@ -23,20 +24,31 @@ import { RouterLink, RouterView } from 'vue-router'
 
 <style scoped>
 header {
-  line-height: 1.5;
-  max-height: 100vh;
+  position: fixed;
+  top: 0;
+  width: 100%;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.3);
+  z-index: 1000;
+  padding: 0.5rem 2rem;
+}
+
+.wrapper {
+  display: flex;
+  justify-content: center; 
+  align-items: center;
+  gap: 2rem; 
 }
 
 .logo {
-  display: block;
-  margin: 0 auto 2rem;
+  font-weight: bold;
+  font-size: 1.5rem;
+  width: 100px;
 }
 
 nav {
-  width: 100%;
-  font-size: 12px;
-  text-align: center;
-  margin-top: 2rem;
+  display: flex;
+  justify-content: center; 
+  gap: 1.5rem; 
 }
 
 nav a.router-link-exact-active {
