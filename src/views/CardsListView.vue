@@ -3,7 +3,6 @@ import {store, fetchCards} from '../store/index'
 </script>
 
 <template>
-    <h1>Cards list fonctionne</h1>
     <ul>
         <li v-for="card in store.cards" :key="card.id">{{ card.name }}</li>
     </ul>
