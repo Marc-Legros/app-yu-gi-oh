@@ -20,6 +20,7 @@ const saveDeck = () => {
   }
   store.deck.push(NewDeck)
 
+  localStorage.setItem("decks", JSON.stringify(store.deck))
   deckName.value=""
   deck.length =0
 }
@@ -27,9 +28,12 @@ const saveDeck = () => {
 </script>
 
 <template>
-  <button @click="loadCards">Charger les cartes</button>
+  <div class="actions">
+    <button @click="loadCards">Charger les cartes</button>
+  </div>
+  
 
-  <ul>
+  <ul class="cards-list">
     <li v-for="card in store.cards" :key="card.id" class="card-item":class="{ selected: deck.includes(card) }" @click="addToDeck(card)">
       <img class="card-img" :src="card.card_images[0].image_url_small" :alt="card.name">
       {{ card.name }}
@@ -38,7 +42,7 @@ const saveDeck = () => {
 
   <div>
     <h3>Deck en cours</h3>
-    <ul>
+    <ul class="cards-list">
       <li v-for="card in deck" :key="card.id">{{ card.name }}</li>
     </ul>
     <input type="text" v-model="deckName" placeholder="Nom du deck">
@@ -57,13 +61,16 @@ button {
   cursor: pointer;
   margin-bottom: 15px;
   transition: 0.2s ease;
+  width: auto;
+  align-self: flex-start;
 }
+
 
 button:hover {
   background-color: #2f5fd0;
 }
 
-ul {
+.cards-list {
   list-style: none;
   padding: 0;
   display: flex;

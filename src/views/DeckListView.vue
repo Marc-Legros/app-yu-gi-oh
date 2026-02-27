@@ -5,7 +5,6 @@
 
 
 <template>
-    <h1>Liste des decks</h1>
     <ul>
       <li v-for=" deck in store.deck" :key="deck"><strong>{{ deck.name }}</strong>
         <ul>
@@ -22,7 +21,6 @@ console.log('DecksListView Chargés')
 
 <style scoped>
 
-/* Fond général */
 h1 {
   color: #4da6ff;
   text-transform: uppercase;
@@ -39,7 +37,7 @@ li {
   margin-bottom: 10px;
 }
 
-/* Bloc deck */
+
 li > strong {
   display: block;
   background-color: #0f1e3d;
@@ -49,7 +47,7 @@ li > strong {
   color: #ffffff;
 }
 
-/* Cartes dans le deck */
+
 li ul {
   margin-top: 5px;
   padding-left: 15px;
@@ -63,7 +61,7 @@ li ul li {
   font-size: 0.9rem;
 }
 
-/* Hover léger */
+
 li ul li:hover {
   background-color: #1f3b85;
   cursor: pointer;
