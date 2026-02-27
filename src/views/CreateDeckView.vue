@@ -47,12 +47,28 @@ const saveDeck = () => {
 </template>
 
 <style scoped>
+
+button {
+  background-color: #1b3c88;
+  color: white;
+  border: 1px solid #4da6ff;
+  padding: 8px 14px;
+  border-radius: 6px;
+  cursor: pointer;
+  margin-bottom: 15px;
+  transition: 0.2s ease;
+}
+
+button:hover {
+  background-color: #2f5fd0;
+}
+
 ul {
   list-style: none;
   padding: 0;
   display: flex;
   flex-wrap: wrap;
-  gap: 5px;
+  gap: 8px;
 }
 
 .card-item {
@@ -62,17 +78,49 @@ ul {
   width: 120px;
   text-align: center;
   cursor: pointer;
-  padding: 5px;
+  padding: 8px;
+  background-color: #0f1e3d;
+  border-radius: 8px;
+  border: 1px solid transparent;
+  transition: 0.2s ease;
+}
+
+.card-item:hover {
+  background-color: #162a5c;
+  border: 1px solid #4da6ff;
 }
 
 .card-item.selected {
-  border: 2px solid rgba(93, 84, 36, 0.84);
-  background-color: rgba(0, 0, 0, 0.2);
+  border: 2px solid #4da6ff;
+  background-color: #1f3b85;
 }
 
 .card-img {
   width: 75px;
   height: auto;
   border-radius: 5px;
+  margin-bottom: 5px;
 }
+
+div {
+  margin-top: 30px;
+  padding: 15px;
+  background-color: #0f1e3d;
+  border-radius: 8px;
+  border: 1px solid #2f5fd0;
+}
+
+input {
+  padding: 6px;
+  border-radius: 6px;
+  border: 1px solid #4da6ff;
+  background-color: #162a5c;
+  color: white;
+  margin-right: 10px;
+}
+
+input::placeholder {
+  color: #a8cfff;
+}
+
 </style>
