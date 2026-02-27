@@ -1,11 +1,13 @@
 <script>
-import {store, fetchCards} from '../store/index'
+import {store, fetchCards, fetchCardsDetails} from '../store/index'
+import CardsDetails from '../views/CardsDetailsView.vue'
 </script>
 
 <template>
     <ul>
-        <li v-for="card in store.cards" :key="card.id">{{ card.name }}</li>
+        <li v-for="card in store.cards" :key="card.id" @click="selectCard(card)">{{ card.name }}</li>
     </ul>
+    <CardsDetails />
     <button @click="loadCards">Charger les cartes</button>
 </template>
 
@@ -13,6 +15,11 @@ import {store, fetchCards} from '../store/index'
 const loadCards = () => {
   fetchCards()
 }
+
+const selectCard= (card) => {
+  fetchCardsDetails(card.id)
+}
+
 console.log('CardsListView Chargés')
 </script>
 

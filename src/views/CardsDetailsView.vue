@@ -12,14 +12,10 @@ import {store, fetchCardsDetails} from '../store/index'
         <p> DEF: {{ store.selectedCard.def }}</p>
     </div>
     <p v-else="">Chargement...</p>
-    <button @click="loadCards">Charger les cartes</button>
 </template>
 
 <script setup>
-const loadCards = () => {
-  const testId = 89631139  
-  fetchCardsDetails(testId)
-}
+
 console.log('CardsDetailsView Chargés')
 </script>
 
