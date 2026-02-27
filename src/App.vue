@@ -9,10 +9,10 @@ import { RouterLink, RouterView } from 'vue-router'
       <img src="./assets/17c4ce6f-e2e9-4397-bb51-4c37ea60f152_removalai_preview.png" alt="" class="logo">
 
       <nav>
-        <RouterLink to="/">Home</RouterLink>
+        <RouterLink to="/"><img src="./assets/home.png" alt=""></RouterLink>
         <RouterLink to="/cards">Cards List</RouterLink>
         <RouterLink to="/cards/id">Cards Details</RouterLink>
-        <RouterLink to="/deck">Deck List</RouterLink>
+        <RouterLink to="/deck"><img src="./assets/deck.png" alt="" class="asset"></RouterLink>
         <RouterLink to="/deck/id">Deck Details</RouterLink>
         <RouterLink to="/create">Create</RouterLink>
       </nav>
@@ -47,7 +47,10 @@ header {
   padding: 0 2rem;
 }
 
-/* ✅ LOGO FIX */
+.asset{
+  height: 40px;
+}
+
 .logo {
   height: 50px;
   width: auto;
@@ -76,10 +79,7 @@ nav a.router-link-exact-active {
   border-bottom: 2px solid #4da6ff;
 }
 
-:global(body) {
-  margin: 0;
-  padding-top: 70px;
-}
+
 
 </style>
 
