@@ -11,7 +11,6 @@ import { RouterLink, RouterView } from 'vue-router'
       <nav>
         <RouterLink to="/"><img src="./assets/home.png" alt=""></RouterLink>
         <RouterLink to="/cards">Cards List</RouterLink>
-        <RouterLink to="/cards/id">Cards Details</RouterLink>
         <RouterLink to="/deck"><img src="./assets/deck.png" alt="" class="asset"></RouterLink>
         <RouterLink to="/deck/id">Deck Details</RouterLink>
         <RouterLink to="/create">Create</RouterLink>
