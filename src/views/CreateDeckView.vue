@@ -20,10 +20,19 @@ const saveDeck = () => {
   }
   store.deck.push(NewDeck)
 
-  localStorage.setItem("decks", JSON.stringify(store.deck))
   deckName.value=""
-  deck.length =0
+  deck.length = 0
 }
+
+const removeCard = (card) => {
+  for (let i = 0; i < deck.length; i++) {
+    if (deck[i].id === card.id) {
+      deck.splice(i, 1)  
+      break               
+    }
+  }
+}
+
 
 </script>
 
@@ -48,6 +57,11 @@ const saveDeck = () => {
     <input type="text" v-model="deckName" placeholder="Nom du deck">
     <button @click="saveDeck">Enregistrer le deck</button>
   </div>
+
+  <li v-for="card in deck" :key="card.id">
+    {{ card.name }}
+    <button @click="removeCard(card)">Supprimer</button>
+  </li>
 </template>
 
 <style scoped>
