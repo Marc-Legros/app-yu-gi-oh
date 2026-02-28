@@ -1,6 +1,6 @@
 <script setup>
 import { store, fetchCards } from '../store/index'
-import { reactive, ref } from 'vue'
+import { reactive, ref, computed } from 'vue'
 
 const deck = reactive([])
 const deckName = ref("")
@@ -33,6 +33,24 @@ const removeCard = (card) => {
   }
 }
 
+const startIndex = ref(0)
+const cardsPerPage = 20
+
+const paginatedCards = computed(() => {
+  return store.cards.slice(startIndex.value, startIndex.value + cardsPerPage)
+})
+
+const nextPage = () => {
+  if (startIndex.value + cardsPerPage < store.cards.length) {
+    startIndex.value += cardsPerPage
+  }
+}
+
+const prevPage = () => {
+  if (startIndex.value > 0) {
+    startIndex.value -= cardsPerPage
+  }
+}
 
 </script>
 
@@ -43,7 +61,7 @@ const removeCard = (card) => {
   
 
   <ul class="cards-list">
-    <li v-for="card in store.cards" :key="card.id" class="card-item":class="{ selected: deck.includes(card) }" @click="addToDeck(card)">
+    <li v-for="card in paginatedCards" :key="card.id" class="card-item":class="{ selected: deck.includes(card) }" @click="addToDeck(card)">
       <img class="card-img" :src="card.card_images[0].image_url_small" :alt="card.name">
       {{ card.name }}
     </li>
@@ -62,6 +80,11 @@ const removeCard = (card) => {
     {{ card.name }}
     <button @click="removeCard(card)">Supprimer</button>
   </li>
+
+  <div class="pagination">
+    <button @click="prevPage">Précédent</button>
+    <button @click="nextPage">Suivant</button>
+  </div>
 </template>
 
 <style scoped>
