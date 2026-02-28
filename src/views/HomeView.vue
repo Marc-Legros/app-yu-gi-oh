@@ -27,93 +27,160 @@ onMounted(() => {
 </script>
 
 <template>
-  <div class="specific-cards">
-    <h2>Cartes</h2>
-   <ul class="cards-list">
-    <li v-for="card in specificCards" :key="card.id" class="card-item">
-      <img :src="card.card_images[0].image_url_small" class="card-img">
-    </li>
-  </ul>
-  </div>
-  <br>
-  <h2>Decks</h2>
-    <ul class="user-decks">
-      <li v-for=" deck in store.deck" :key="deck" class="deck-preview"><strong>{{ deck.name }}</strong>
-        <ul class="deck-cards">
+  <div class="home-page">
+
+    <section class="specific-cards">
+      <h2>Cartes</h2>
+      <ul class="cards-list">
+        <li v-for="card in specificCards" :key="card.id" class="card-item">
+          <img :src="card.card_images[0].image_url_small" class="card-img">
+        </li>
+      </ul>
+    </section>
+
+    <section class="decks-section">
+      <h2>Decks</h2>
+      <ul class="user-decks">
+        <li v-for="deck in store.deck" :key="deck.name" class="deck-preview">
+          <strong>{{ deck.name }}</strong>
+          <ul class="deck-cards">
             <li v-for="card in deck.cards.slice(0,3)" :key="card.id">
               <img :src="card.card_images[0].image_url_small" class="img-preview">
             </li>
-        </ul>
+          </ul>
         </li>
-    </ul>
+      </ul>
+    </section>
+
+  </div>
 </template>
 
 
 <style scoped>
-
-
-.user-decks {
-  margin-top: 40px; 
+.home-page {
+  padding: 40px;
+  min-height: 100vh;
+  background: linear-gradient(to bottom, #0b1426, #111f3f);
+  color: white;
 }
 
-.deck-preview strong {
-  color: #a8cfff; 
-  text-shadow: 1px 1px 2px rgba(0,0,0,0.5); 
-  font-weight: bold;
-  font-size: 1.1em;
+.decks-section {
+  margin-top: 60px;
 }
 
-.img-preview {
-  position: relative; 
-  width: 75px;       
-  height: auto;
-  border-radius: 5px;
-  border: 1px solid #4da6ff; 
-  box-shadow: 0 0 8px rgba(106, 119, 133, 0.7);
-  transition: transform 0.2s;
+/* ===== TITRES ===== */
+
+h2 {
+  margin-bottom: 20px;
+  font-size: 1.8rem;
+  border-left: 4px solid #4da6ff;
+  padding-left: 12px;
 }
 
-.img-preview {
-  position: absolute; 
-  width: 75px;       
-  height: auto;
-  border-radius: 5px;
-  border: 1px solid #4da6ff; 
-  box-shadow: 0 0 8px rgba(106, 119, 133, 0.7);
-  transition: transform 0.2s;
-}
-
-.deck-cards {
-  display: flex;      
-  gap: 10px;
-  padding: 10px 0 0 0;
-  list-style: none;
-}
+/* ===== CARTES POPULAIRES ===== */
 
 .cards-list {
-  display: flex;              
-  gap: 15px;                   
-  overflow-x: auto;           
-  padding: 10px;
+  display: flex;
+  gap: 20px;
+  overflow-x: auto;
+  padding-bottom: 20px;
   list-style: none;
 }
 
 .card-item {
-  display: flex;
-  flex-direction: column;      
-  align-items: center;
-  background-color: #0f1e3d;
-  border: 2px solid #4da6ff;
-  border-radius: 10px;
-  padding: 5px;
-  min-width: 120px;            
-  box-shadow: 0 0 10px rgba(77,166,255,0.5);
+  background: #162b55;
+  padding: 15px;
+  border-radius: 15px;
+  min-width: 200px;
+  box-shadow: 0 6px 20px rgba(0,0,0,0.5);
+  transition: all 0.3s ease;
+}
+
+.card-item:hover {
+  transform: translateY(-10px);
+  box-shadow: 0 10px 25px rgba(77,166,255,0.7);
 }
 
 .card-img {
-  width: 200px;
-  height: auto;
-  border-radius: 5px;
-  margin-bottom: 5px;
+  width: 100%;
+  border-radius: 10px;
+}
+
+/* ===== SECTION DECKS ===== */
+
+.user-decks {
+  margin-top: 60px;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 30px;
+  list-style: none;
+  padding: 0;
+}
+
+.deck-preview {
+  background: #1b2f5c;
+  padding: 20px;
+  border-radius: 18px;
+  box-shadow: 0 8px 25px rgba(0,0,0,0.6);
+  transition: 0.3s ease;
+}
+
+.deck-preview:hover {
+  transform: translateY(-5px);
+}
+
+.deck-preview strong {
+  font-size: 1.2rem;
+  color: #4da6ff;
+}
+
+.deck-cards {
+  position: relative;
+  height: 130px;
+  overflow: hidden;
+}
+
+.deck-cards li {
+  position: absolute;
+  top: 0;
+  transition: transform 0.3s ease;
+}
+
+.deck-cards li:nth-child(1) {
+  left: 0;
+  z-index: 3;
+}
+
+.deck-cards li:nth-child(2) {
+  left: 25px;
+  z-index: 2;
+}
+
+.deck-cards li:nth-child(3) {
+  left: 50px;
+  z-index: 1;
+}
+
+.img-preview {
+  width: 70px;
+  border-radius: 8px;
+  border: 1px solid #4da6ff;
+  transition: 0.2s ease;
+}
+
+.img-preview:hover {
+  transform: scale(1.1);
+}
+
+/* ===== RESPONSIVE ===== */
+
+@media (max-width: 768px) {
+  .card-img {
+    width: 140px;
+  }
+
+  h2 {
+    font-size: 1.4rem;
+  }
 }
 </style>
