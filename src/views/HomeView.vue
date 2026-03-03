@@ -1,10 +1,10 @@
 <script setup>
-  import { store, fetchCards } from '../store/index'
-  import { reactive, ref } from 'vue'
-  import { computed, onMounted } from 'vue'
+import { store, fetchCards } from '../store/index'
+import { ref, computed, onMounted } from 'vue'
 
 const search = ref('')
 
+// Cartes spécifiques
 const specificNames = [
   "Blue-Eyes White Dragon",
   "Dark Magician",
@@ -14,62 +14,86 @@ const specificNames = [
   "Exodia the Forbidden One", 
 ]
 
-const specificCards = computed(() => {
-  return store.cards.filter(card =>
+const specificCards = computed(() =>
+  store.cards.filter(card =>
     specificNames.includes(card.name)
   )
-})
+)
+
+// Résultats de recherche
+const searchResults = computed(() =>
+  store.cards.filter(card =>
+    card.name.toLowerCase().includes(search.value.toLowerCase())
+  )
+)
 
 onMounted(() => {
   fetchCards()
 })
-
 </script>
 
 <template>
-  <div class="home-page">
+<div class="home-page">
 
-    <section class="specific-cards">
-      <h2>Cartes</h2>
-      <ul class="cards-list">
-        <li v-for="card in specificCards" :key="card.id" class="card-item">
-          <img :src="card.card_images[0].image_url_small" class="card-img">
-        </li>
-      </ul>
-    </section>
+  <!-- Barre de recherche toujours visible -->
+  <input
+    v-model="search"
+    type="text"
+    placeholder="Rechercher une carte..."
+    class="search-bar"
+  />
 
-    <section class="decks-section">
-      <h2>Decks</h2>
-      <ul class="user-decks">
-        <li v-for="deck in store.deck" :key="deck.name" class="deck-preview">
-          <strong>{{ deck.name }}</strong>
-          <ul class="deck-cards">
-            <li v-for="card in deck.cards.slice(0,3)" :key="card.id">
-              <img :src="card.card_images[0].image_url_small" class="img-preview">
-            </li>
-          </ul>
-        </li>
-      </ul>
-    </section>
+  <!-- Cartes spécifiques horizontales -->
+  <section class="specific-cards">
+    <h2>Cartes Spécifiques</h2>
+    <ul class="cards-list">
+      <li v-for="card in specificCards" :key="card.id" class="card-item">
+        <img :src="card.card_images[0].image_url_small" class="card-img">
+      </li>
+    </ul>
+  </section>
 
-  </div>
+  <!-- Résultats de recherche verticales -->
+  <section class="search-cards" v-if="search">
+    <h2>Résultats pour "{{ search }}"</h2>
+    <ul class="cards-list search-results-list">
+      <li v-for="card in searchResults" :key="card.id" class="card-item">
+        <img :src="card.card_images[0].image_url_small" class="card-img">
+      </li>
+    </ul>
+  </section>
+
+  <!-- Decks -->
+  <section class="decks-section">
+    <h2>Decks</h2>
+    <ul class="user-decks">
+      <li v-for="deck in store.deck" :key="deck.name" class="deck-preview">
+        <strong>{{ deck.name }}</strong>
+        <ul class="deck-cards">
+          <li v-for="card in deck.cards.slice(0,3)" :key="card.id">
+            <img :src="card.card_images[0].image_url_small" class="img-preview">
+          </li>
+        </ul>
+      </li>
+    </ul>
+  </section>
+
+</div>
 </template>
 
-
-<style scoped>
+<style>
+/* ===== HOME PAGE ===== */
 .home-page {
-  padding: 40px;
+  padding-top: 90px; /* espace sous le header fixe */
+  padding-left: 5%;
+  padding-right: 5%;
+  padding-bottom: 40px;
   min-height: 100vh;
   background: linear-gradient(to bottom, #0b1426, #111f3f);
   color: white;
 }
 
-.decks-section {
-  margin-top: 60px;
-}
-
-/* ===== TITRES ===== */
-
+/* TITRES */
 h2 {
   margin-bottom: 20px;
   font-size: 1.8rem;
@@ -77,8 +101,19 @@ h2 {
   padding-left: 12px;
 }
 
-/* ===== CARTES POPULAIRES ===== */
+/* BARRE DE RECHERCHE */
+.search-bar {
+  width: 100%;
+  max-width: 400px;
+  padding: 10px 15px;
+  margin-bottom: 20px;
+  border-radius: 10px;
+  border: none;
+  outline: none;
+  font-size: 1rem;
+}
 
+/* CARTES SPECIFIQUES HORIZONTALES */
 .cards-list {
   display: flex;
   gap: 20px;
@@ -106,8 +141,18 @@ h2 {
   border-radius: 10px;
 }
 
-/* ===== SECTION DECKS ===== */
+/* RESULTATS DE RECHERCHE VERTICALES */
+.search-results-list {
+  display: block; /* vertical */
+  padding: 0;
+}
 
+.search-results-list .card-item {
+  min-width: auto;
+  margin-bottom: 15px;
+}
+
+/* DECKS */
 .user-decks {
   margin-top: 60px;
   display: grid;
@@ -172,8 +217,7 @@ h2 {
   transform: scale(1.1);
 }
 
-/* ===== RESPONSIVE ===== */
-
+/* RESPONSIVE */
 @media (max-width: 768px) {
   .card-img {
     width: 140px;
