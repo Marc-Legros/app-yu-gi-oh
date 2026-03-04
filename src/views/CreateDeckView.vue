@@ -11,9 +11,7 @@ const startIndex = ref(0)
 const cardsPerPage = 20
 
 // Charger les cartes depuis le store
-const loadCards = () => {
-  fetchCards()
-}
+const loadCards = () => fetchCards()
 
 // Ajouter une carte au deck (max 3 exemplaires)
 const addToDeck = (card) => {
@@ -31,7 +29,7 @@ const removeCard = (card) => {
   if (index !== -1) deck.splice(index, 1)
 }
 
-// Enregistrer le deck (entre 40 et 60 cartes)
+// Enregistrer le deck et sauvegarder dans localStorage
 const saveDeck = () => {
   if (deck.length < 40) {
     alert("Le deck doit contenir au moins 40 cartes !")
@@ -47,9 +45,13 @@ const saveDeck = () => {
     cards: [...deck]
   }
 
+  // Ajouter le deck dans le store
   store.deck.push(NewDeck)
 
-  // Réinitialiser
+  // Sauvegarder dans localStorage
+  localStorage.setItem("userDecks", JSON.stringify(store.deck))
+
+  // Réinitialiser le deck en cours
   deckName.value = ""
   deck.length = 0
 }
@@ -72,9 +74,13 @@ const prevPage = () => {
   }
 }
 
-// Charger les cartes au montage
+// Charger les cartes et les decks sauvegardés au montage
 onMounted(() => {
   fetchCards()
+  const savedDecks = localStorage.getItem("userDecks")
+  if (savedDecks) {
+    store.deck = JSON.parse(savedDecks)
+  }
 })
 </script>
 
@@ -279,7 +285,7 @@ input::placeholder {
   }
 
   .current-deck {
-    padding: 15px;
+    padding: 15px; 
   }
 }
 </style>
