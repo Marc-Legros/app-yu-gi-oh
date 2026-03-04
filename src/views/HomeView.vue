@@ -1,8 +1,17 @@
 <script setup>
 import { store, fetchCards } from '../store/index'
-import { ref, computed, onMounted } from 'vue'
+import { ref, computed, onMounted, watch } from 'vue'
 
 const search = ref('')
+
+// Pagination
+const startIndex = ref(0)
+const cardsPerPage = 12
+
+// Reset pagination quand la recherche change
+watch(search, () => {
+  startIndex.value = 0
+})
 
 // Cartes spécifiques
 const specificNames = [
@@ -11,7 +20,7 @@ const specificNames = [
   "Kuriboh",
   "Elemental HERO Neos",
   "Stardust Dragon",
-  "Exodia the Forbidden One", 
+  "Exodia the Forbidden One",
 ]
 
 const specificCards = computed(() =>
@@ -20,12 +29,30 @@ const specificCards = computed(() =>
   )
 )
 
-// Résultats de recherche
+// Résultats recherche simple
 const searchResults = computed(() =>
   store.cards.filter(card =>
     card.name.toLowerCase().includes(search.value.toLowerCase())
   )
 )
+
+// Cartes paginées
+const paginatedCards = computed(() =>
+  searchResults.value.slice(startIndex.value, startIndex.value + cardsPerPage)
+)
+
+// Pagination simple
+const nextPage = () => {
+  if (startIndex.value + cardsPerPage < searchResults.value.length) {
+    startIndex.value += cardsPerPage
+  }
+}
+
+const prevPage = () => {
+  if (startIndex.value > 0) {
+    startIndex.value -= cardsPerPage
+  }
+}
 
 onMounted(() => {
   fetchCards()
@@ -35,7 +62,7 @@ onMounted(() => {
 <template>
 <div class="home-page">
 
-  <!-- Barre de recherche toujours visible -->
+  <!-- Barre de recherche -->
   <input
     v-model="search"
     type="text"
@@ -43,39 +70,55 @@ onMounted(() => {
     class="search-bar"
   />
 
-  <!-- Cartes spécifiques horizontales -->
-  <section class="specific-cards">
-    <h2>Cartes Spécifiques</h2>
-    <ul class="cards-list">
-      <li v-for="card in specificCards" :key="card.id" class="card-item">
-        <img :src="card.card_images[0].image_url_small" class="card-img">
-      </li>
-    </ul>
-  </section>
+  <!-- Si on NE cherche PAS -->
+  <div v-if="!search">
 
-  <!-- Résultats de recherche verticales -->
-  <section class="search-cards" v-if="search">
+    <!-- Cartes spécifiques -->
+    <section class="specific-cards">
+      <h2>Cartes Spécifiques</h2>
+      <ul class="cards-list">
+        <li v-for="card in specificCards" :key="card.id" class="card-item">
+          <img :src="card.card_images[0].image_url_small" class="card-img">
+        </li>
+      </ul>
+    </section>
+
+    <!-- Decks -->
+    <section class="decks-section">
+      <h2>Decks</h2>
+      <ul class="user-decks">
+        <li v-for="deck in store.deck" :key="deck.name" class="deck-preview">
+          <strong>{{ deck.name }}</strong>
+          <ul class="deck-cards">
+            <li v-for="card in deck.cards.slice(0,3)" :key="card.id">
+              <img :src="card.card_images[0].image_url_small" class="img-preview">
+            </li>
+          </ul>
+        </li>
+      </ul>
+    </section>
+
+  </div>
+
+  <!-- Si on cherche -->
+  <section v-else class="search-cards">
     <h2>Résultats pour "{{ search }}"</h2>
-    <ul class="cards-list search-results-list">
-      <li v-for="card in searchResults" :key="card.id" class="card-item">
+
+    <p v-if="searchResults.length === 0">
+      Aucune carte trouvée.
+    </p>
+
+    <ul v-else class="cards-list search-results-list">
+      <li v-for="card in paginatedCards" :key="card.id" class="card-item">
         <img :src="card.card_images[0].image_url_small" class="card-img">
       </li>
     </ul>
-  </section>
 
-  <!-- Decks -->
-  <section class="decks-section">
-    <h2>Decks</h2>
-    <ul class="user-decks">
-      <li v-for="deck in store.deck" :key="deck.name" class="deck-preview">
-        <strong>{{ deck.name }}</strong>
-        <ul class="deck-cards">
-          <li v-for="card in deck.cards.slice(0,3)" :key="card.id">
-            <img :src="card.card_images[0].image_url_small" class="img-preview">
-          </li>
-        </ul>
-      </li>
-    </ul>
+    <!-- Pagination -->
+    <div v-if="searchResults.length > cardsPerPage" class="pagination">
+      <button @click="prevPage" :disabled="startIndex === 0">← Précédent</button>
+      <button @click="nextPage" :disabled="startIndex + cardsPerPage >= searchResults.length">Suivant →</button>
+    </div>
   </section>
 
 </div>
@@ -84,7 +127,7 @@ onMounted(() => {
 <style>
 /* ===== HOME PAGE ===== */
 .home-page {
-  padding-top: 90px; /* espace sous le header fixe */
+  padding-top: 90px;
   padding-left: 5%;
   padding-right: 5%;
   padding-bottom: 40px;
@@ -143,7 +186,7 @@ h2 {
 
 /* RESULTATS DE RECHERCHE VERTICALES */
 .search-results-list {
-  display: block; /* vertical */
+  display: block;
   padding: 0;
 }
 
@@ -215,6 +258,28 @@ h2 {
 
 .img-preview:hover {
   transform: scale(1.1);
+}
+
+/* Pagination */
+.pagination {
+  margin-top: 20px;
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+}
+
+.pagination button {
+  padding: 8px 15px;
+  background: #4da6ff;
+  border: none;
+  border-radius: 6px;
+  color: white;
+  cursor: pointer;
+}
+
+.pagination button:disabled {
+  background: gray;
+  cursor: not-allowed;
 }
 
 /* RESPONSIVE */
