@@ -1,112 +1,76 @@
-<script>
-    import { store, fetchCards } from '../store/index'
-    import { reactive, ref } from 'vue'
-</script>
+<script setup>
+import { store } from '../store/index'
+import { ref } from 'vue'
+import { useRouter } from 'vue-router'
 
+const router = useRouter()
+const decks = store.deck
+
+// Aller vers les détails du deck
+const goToDeck = (deck) => {
+  router.push({ name: 'DeckDetails', params: { deckName: deck.name } })
+}
+</script>
 
 <template>
-    <ul>
-      <li v-for=" deck in store.deck" :key="deck"><strong>{{ deck.name }}</strong>
-        <ul>
-            <li v-for="card in deck.cards" :key="card.id">{{ card.name }}
-            </li>
-        </ul>
-        </li>
-    </ul>
+  <div>
+    <h1>Mes Decks</h1>
+
+    <div 
+      v-for="deck in decks" 
+      :key="deck.name" 
+      class="deck-card" 
+      @click="goToDeck(deck)"
+    >
+      <strong>{{ deck.name }}</strong>
+
+      <div class="deck-preview">
+        <div v-for="card in deck.cards.slice(0,3)" :key="card.id" class="card-item">
+          <img :src="card.card_images?.[0]?.image_url_small" alt="" />
+          {{ card.name }}
+        </div>
+        <span v-if="deck.cards.length > 3">+{{ deck.cards.length - 3 }} autres</span>
+      </div>
+    </div>
+  </div>
 </template>
 
-<script setup>
-console.log('DecksListView Chargés')
-</script>
-
 <style scoped>
-
-
-/* TITRE PRINCIPAL */
-h1 {
-  color: #4da6ff;
-  text-transform: uppercase;
-  letter-spacing: 2px;
-  margin-bottom: 20px;
-  text-align: center;
-  font-size: 1.8rem;
-}
-
-/* LISTE PRINCIPALE DES DECKS */
-ul {
-  list-style: none;
-  padding: 0;
-  margin: 0;
-}
-
-li.deck-item {
-  margin-bottom: 20px;
-  background: linear-gradient(145deg, #0f1e3d, #162a5c);
-  border-radius: 12px;
+.deck-card {
   border: 2px solid #4da6ff;
-  box-shadow: 0 6px 15px rgba(0, 0, 0, 0.5);
-  transition: all 0.3s ease;
+  padding: 10px;
+  margin-bottom: 15px;
+  border-radius: 8px;
+  background: #0f1e3d;
+  cursor: pointer;
 }
 
-li.deck-item:hover {
-  transform: translateY(-3px);
-  box-shadow: 0 10px 20px rgba(77, 166, 255, 0.5);
+.deck-card:hover {
+  background: #162a5c;
 }
 
-/* NOM DU DECK */
-li > strong {
-  display: block;
-  background-color: #1b2f5c;
-  padding: 12px 15px;
-  border-radius: 10px 10px 0 0;
-  border-bottom: 1px solid #4da6ff;
-  color: #ffffff;
-  font-size: 1.2rem;
-  font-weight: 600;
-}
-
-/* LISTE DES CARTES */
-li ul {
-  margin: 0;
-  padding: 8px 10px;
+.deck-preview {
   display: flex;
-  flex-wrap: wrap;
   gap: 6px;
-  background-color: #111f3f;
-  border-radius: 0 0 10px 10px;
+  flex-wrap: wrap;
+  margin-top: 6px;
 }
 
-/* CARTES MINIATURES */
-li ul li.card-item {
-  flex: 0 0 auto;
-  background-color: #162a5c;
-  padding: 4px 6px;
-  border-radius: 4px;
+.card-item {
+  background: #162a5c;
   color: #cfe2ff;
   font-size: 0.75rem;
   border: 1px solid #4da6ff;
-  transition: all 0.3s ease;
-  max-width: 100px;
+  border-radius: 4px;
+  padding: 2px 4px;
+  width: 50px;
   text-align: center;
 }
 
-li ul li.card-item:hover {
-  background-color: #1f3b85;
-  transform: scale(1.05);
-  cursor: pointer;
-  box-shadow: 0 4px 8px rgba(77, 166, 255, 0.4);
-}
-
-/* RESPONSIVE */
-@media (max-width: 768px) {
-  li ul {
-    flex-direction: column;
-  }
-
-  li ul li.card-item {
-    width: 100%;
-    font-size: 0.8rem;
-    padding: 6px 8px;
-  }
+.card-item img {
+  width: 40px;
+  height: auto;
+  display: block;
+  margin: auto;
 }
 </style>
