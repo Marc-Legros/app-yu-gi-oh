@@ -23,10 +23,11 @@ const addToDeck = (card) => {
   deck.push(card)
 }
 
-// Supprimer une carte du deck
 const removeCard = (card) => {
-  const index = deck.findIndex(c => c.id === card.id)
-  if (index !== -1) deck.splice(index, 1)
+  const index = deck.indexOf(card)
+  if (index > -1) {
+    deck.splice(index, 1)
+  }
 }
 
 // Enregistrer le deck et sauvegarder dans localStorage
