@@ -1,295 +1,208 @@
 <script setup>
 import { store, fetchCards } from '../store/index'
-import { ref, computed, onMounted, watch } from 'vue'
+import { ref, computed, onMounted } from 'vue'
 
 const search = ref('')
-
-// Pagination
 const startIndex = ref(0)
 const cardsPerPage = 12
 
-// Reset pagination quand la recherche change
-watch(search, () => {
-  startIndex.value = 0
-})
-
-// Cartes spécifiques
 const specificNames = [
-  "Blue-Eyes White Dragon",
-  "Dark Magician",
-  "Kuriboh",
-  "Elemental HERO Neos",
-  "Stardust Dragon",
-  "Exodia the Forbidden One",
+    "Blue-Eyes White Dragon",
+    "Dark Magician",
+    "Kuriboh",
+    "Elemental HERO Neos",
+    "Stardust Dragon",
+    "Exodia the Forbidden One"
 ]
 
 const specificCards = computed(() =>
-  store.cards.filter(card =>
-    specificNames.includes(card.name)
-  )
+    store.cards.filter(card =>
+        specificNames.includes(card.name)
+    )
 )
 
-// Résultats recherche simple
 const searchResults = computed(() =>
-  store.cards.filter(card =>
-    card.name.toLowerCase().includes(search.value.toLowerCase())
-  )
+    store.cards.filter(card =>
+        card.name.toLowerCase().includes(search.value.toLowerCase())
+    )
 )
 
-// Cartes paginées
 const paginatedCards = computed(() =>
-  searchResults.value.slice(startIndex.value, startIndex.value + cardsPerPage)
+    searchResults.value.slice(startIndex.value, startIndex.value + cardsPerPage)
 )
 
-// Pagination simple
 const nextPage = () => {
-  if (startIndex.value + cardsPerPage < searchResults.value.length) {
-    startIndex.value += cardsPerPage
-  }
+    if (startIndex.value + cardsPerPage < searchResults.value.length) {
+        startIndex.value += cardsPerPage
+    }
 }
 
 const prevPage = () => {
-  if (startIndex.value > 0) {
-    startIndex.value -= cardsPerPage
-  }
+    if (startIndex.value > 0) {
+        startIndex.value -= cardsPerPage
+    }
 }
 
 onMounted(() => {
-  fetchCards()
+    fetchCards()
 })
 </script>
 
 <template>
-<div class="home-page">
+    <div class="home-page">
 
-  <!-- Barre de recherche -->
-  <input
-    v-model="search"
-    type="text"
-    placeholder="Rechercher une carte..."
-    class="search-bar"
-  />
+        <input v-model="search" type="text" placeholder="Rechercher une carte..." class="search-bar"/>
 
-  <!-- Si on NE cherche PAS -->
-  <div v-if="!search">
+        <div v-if="search === ''">
 
-    <!-- Cartes spécifiques -->
-    <section class="specific-cards">
-      <h2>Cartes Spécifiques</h2>
-      <ul class="cards-list">
-        <li v-for="card in specificCards" :key="card.id" class="card-item">
-          <img :src="card.card_images[0].image_url_small" class="card-img">
-        </li>
-      </ul>
-    </section>
+            <section class="specific-cards">
+                <h2>Cartes Spécifiques</h2>
+                <ul class="cards-list">
+                    <li v-for="card in specificCards" :key="card.id" class="card-item"><img :src="card.card_images[0].image_url_small" class="card-img"/></li>
+                </ul>
+            </section>
 
-    <!-- Decks -->
-    <section class="decks-section">
-      <h2>Decks</h2>
-      <ul class="user-decks">
-        <li v-for="deck in store.deck" :key="deck.name" class="deck-preview">
-          <strong>{{ deck.name }}</strong>
-          <ul class="deck-cards">
-            <li v-for="card in deck.cards.slice(0,3)" :key="card.id">
-              <img :src="card.card_images[0].image_url_small" class="img-preview">
-            </li>
-          </ul>
-        </li>
-      </ul>
-    </section>
+            <section class="decks-section">
+                <h2>Decks</h2>
+                <ul class="user-decks">
+                    <li v-for="deck in store.deck" :key="deck.name" class="deck-preview">
+                        <strong>{{ deck.name }}</strong>
+                        <ul class="deck-cards">
+                            <li v-for="card in deck.cards.slice(0,3)" :key="card.id"><img :src="card.card_images[0].image_url_small" class="img-preview"/></li>
+                        </ul>
+                    </li>
+                </ul>
+            </section>
 
-  </div>
+        </div>
 
-  <!-- Si on cherche -->
-  <section v-else class="search-cards">
-    <h2>Résultats pour "{{ search }}"</h2>
+        <div v-else>
+            <h2>Résultats pour "{{ search }}"</h2>
+            <p v-if="searchResults.length === 0">Aucune carte trouvée</p>
+            <ul v-else class="cards-list search-results-list">
+                <li v-for="card in paginatedCards" :key="card.id" class="card-item"><img :src="card.card_images[0].image_url_small" class="card-img"/></li>
+            </ul>
 
-    <p v-if="searchResults.length === 0">
-      Aucune carte trouvée.
-    </p>
-
-    <ul v-else class="cards-list search-results-list">
-      <li v-for="card in paginatedCards" :key="card.id" class="card-item">
-        <img :src="card.card_images[0].image_url_small" class="card-img">
-      </li>
-    </ul>
-
-    <!-- Pagination -->
-    <div v-if="searchResults.length > cardsPerPage" class="pagination">
-      <button @click="prevPage" :disabled="startIndex === 0">← Précédent</button>
-      <button @click="nextPage" :disabled="startIndex + cardsPerPage >= searchResults.length">Suivant →</button>
+            <div v-if="searchResults.length > cardsPerPage" class="pagination">
+                <button @click="prevPage" :disabled="startIndex === 0">Précédent</button>
+                <button @click="nextPage" :disabled="startIndex + cardsPerPage >= searchResults.length">Suivant </button>
+            </div>
+        </div>
     </div>
-  </section>
-
-</div>
 </template>
 
 <style>
-/* ===== HOME PAGE ===== */
 .home-page {
-  padding-top: 90px;
-  padding-left: 5%;
-  padding-right: 5%;
-  padding-bottom: 40px;
-  min-height: 100vh;
-  background: linear-gradient(to bottom, #0b1426, #111f3f);
-  color: white;
+    width: 100vw; 
+    min-height: 100vh;
+    padding: 90px 40px 40px; 
+    background: linear-gradient(to bottom, #0b1426, #111f3f);
+    color: white;
+    box-sizing: border-box;
 }
 
-/* TITRES */
 h2 {
-  margin-bottom: 20px;
-  font-size: 1.8rem;
-  border-left: 4px solid #4da6ff;
-  padding-left: 12px;
+    margin-bottom: 15px;
+    font-size: 1.8rem;
+    border-left: 4px solid #4da6ff;
+    padding-left: 12px;
 }
 
-/* BARRE DE RECHERCHE */
 .search-bar {
-  width: 100%;
-  max-width: 400px;
-  padding: 10px 15px;
-  margin-bottom: 20px;
-  border-radius: 10px;
-  border: none;
-  outline: none;
-  font-size: 1rem;
+    width: 100%;
+    padding: 10px 15px;
+    margin-bottom: 20px;
+    border-radius: 8px;
+    border: none;
+    font-size: 1rem;
+    box-sizing: border-box;
 }
 
-/* CARTES SPECIFIQUES HORIZONTALES */
 .cards-list {
-  display: flex;
-  gap: 20px;
-  overflow-x: auto;
-  padding-bottom: 20px;
-  list-style: none;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 15px;
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    justify-content: center;
 }
 
 .card-item {
-  background: #162b55;
-  padding: 15px;
-  border-radius: 15px;
-  min-width: 200px;
-  box-shadow: 0 6px 20px rgba(0,0,0,0.5);
-  transition: all 0.3s ease;
+    background: #162b55;
+    padding: 10px;
+    border-radius: 12px;
+    flex: 1 1 180px; 
+    max-width: 220px; 
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.4);
+    transition: 0.3s;
+    box-sizing: border-box;
+    min-width: 150px;
 }
 
 .card-item:hover {
-  transform: translateY(-10px);
-  box-shadow: 0 10px 25px rgba(77,166,255,0.7);
+    transform: translateY(-5px);
 }
 
 .card-img {
-  width: 100%;
-  border-radius: 10px;
+    width: 100%;
+    border-radius: 8px;
 }
 
-/* RESULTATS DE RECHERCHE VERTICALES */
-.search-results-list {
-  display: block;
-  padding: 0;
-}
-
-.search-results-list .card-item {
-  min-width: auto;
-  margin-bottom: 15px;
-}
-
-/* DECKS */
 .user-decks {
-  margin-top: 60px;
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-  gap: 30px;
-  list-style: none;
-  padding: 0;
+    margin-top: 40px;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 20px;
+    list-style: none;
+    padding: 0;
+    width: 100%;
 }
 
 .deck-preview {
-  background: #1b2f5c;
-  padding: 20px;
-  border-radius: 18px;
-  box-shadow: 0 8px 25px rgba(0,0,0,0.6);
-  transition: 0.3s ease;
-}
-
-.deck-preview:hover {
-  transform: translateY(-5px);
+    background: #1b2f5c;
+    padding: 15px;
+    border-radius: 12px;
+    width: 100%;
 }
 
 .deck-preview strong {
-  font-size: 1.2rem;
-  color: #4da6ff;
+    font-size: 1.1rem;
+    color: #4da6ff;
 }
 
 .deck-cards {
-  position: relative;
-  height: 130px;
-  overflow: hidden;
-}
-
-.deck-cards li {
-  position: absolute;
-  top: 0;
-  transition: transform 0.3s ease;
-}
-
-.deck-cards li:nth-child(1) {
-  left: 0;
-  z-index: 3;
-}
-
-.deck-cards li:nth-child(2) {
-  left: 25px;
-  z-index: 2;
-}
-
-.deck-cards li:nth-child(3) {
-  left: 50px;
-  z-index: 1;
+    display: flex;
+    gap: 8px;
+    margin-top: 8px;
+    flex-wrap: wrap;
 }
 
 .img-preview {
-  width: 70px;
-  border-radius: 8px;
-  border: 1px solid #4da6ff;
-  transition: 0.2s ease;
+    width: 60px;
+    border-radius: 6px;
+    border: 1px solid #4da6ff;
 }
 
-.img-preview:hover {
-  transform: scale(1.1);
-}
-
-/* Pagination */
 .pagination {
-  margin-top: 20px;
-  display: flex;
-  justify-content: center;
-  gap: 10px;
+    margin-top: 15px;
+    display: flex;
+    justify-content: center;
+    gap: 8px;
+    flex-wrap: wrap;
 }
 
 .pagination button {
-  padding: 8px 15px;
-  background: #4da6ff;
-  border: none;
-  border-radius: 6px;
-  color: white;
-  cursor: pointer;
+    padding: 6px 12px;
+    background: #4da6ff;
+    border: none;
+    border-radius: 5px;
+    color: white;
+    cursor: pointer;
 }
 
 .pagination button:disabled {
-  background: gray;
-  cursor: not-allowed;
-}
-
-/* RESPONSIVE */
-@media (max-width: 768px) {
-  .card-img {
-    width: 140px;
-  }
-
-  h2 {
-    font-size: 1.4rem;
-  }
+    background: gray;
+    cursor: default;
 }
 </style>
