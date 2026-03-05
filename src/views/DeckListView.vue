@@ -6,7 +6,6 @@ import { useRouter } from 'vue-router'
 const router = useRouter()
 const decks = store.deck
 
-// Aller vers les détails du deck
 const goToDeck = (deck) => {
   router.push({ name: 'DeckDetails', params: { deckName: deck.name } })
 }
@@ -16,12 +15,7 @@ const goToDeck = (deck) => {
   <div>
     <h1>Mes Decks</h1>
 
-    <div 
-      v-for="deck in decks" 
-      :key="deck.name" 
-      class="deck-card" 
-      @click="goToDeck(deck)"
-    >
+    <div v-for="deck in decks" :key="deck.name" class="deck-card" @click="goToDeck(deck)">
       <strong>{{ deck.name }}</strong>
 
       <div class="deck-preview">
@@ -29,7 +23,6 @@ const goToDeck = (deck) => {
           <img :src="card.card_images?.[0]?.image_url_small" alt="" />
           {{ card.name }}
         </div>
-        <span v-if="deck.cards.length > 3">+{{ deck.cards.length - 3 }} autres</span>
       </div>
     </div>
   </div>
